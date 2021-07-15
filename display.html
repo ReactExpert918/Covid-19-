@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  	<head>
+    	<title>Patient Display</title>
+    	<meta charset="utf-8">
+  	</head>
+  	<body>
+
+    <table border="1">
+      <tr>
+        <th>Name:</th>
+        <td><div id="name"></div></td>
+      </tr>
+      <tr>
+        <th>Gender:</th>
+        <td><div id="gender"></div></td>
+      </tr>
+      <tr>
+        <th>Age:</th>
+        <td><div id="age"></div></td>
+      </tr>
+      <tr>
+        <th>Address:</th>
+        <td><div id="address"></div></td>
+      </tr>
+      <tr>
+        <th>Postcode:</th>
+        <td><div id="postcode"></div></td>
+      </tr>
+      <tr>
+        <th>City:</th>
+        <td><div id="city"></div></td>
+      </tr>
+      <tr>
+        <th>State:</th>
+        <td><div id="state"></div></td>
+      </tr>
+      <tr>
+        <th>Mobile No:</th>
+        <td><div id="mobileno"></div></td>
+      </tr>
+    </table>
+
+    <br /><a href="index.html">Main Page</a>
+
+   	<script src="js/jquery-3.2.1.min.js"></script>
+		<script>
+			$(function(){
+
+            var getParams = function (url) {
+               var params = {};
+               var parser = document.createElement('a');
+               parser.href = url;
+               var query = parser.search.substring(1);
+               var vars = query.split('&');
+               for (var i = 0; i < vars.length; i++) {
+                  var pair = vars[i].split('=');
+                  params[pair[0]] = decodeURIComponent(pair[1]);
+               }
+               return params;
+            };
+
+            var params = getParams(window.location.href);
+            id = params.id;
+
+            $.ajax({
+               type: "get", 
+               url: 'api/patients/' + id,
+               dataType: "json",
+               success: function(data){
+
+                  $("#id").html(data.id);
+                  $("#name").html(data.name);
+                  $("#gender").html(data.gender);
+                  $("#age").html(data.age);
+                  $("#address").html(data.address);
+                  $("#postcode").html(data.postcode); 
+                  $("#city").html(data.city); 
+                  $("#state").html(data.state); 
+                  $("#mobileno").html(data.mobileno); 
+
+               },
+               error: function() {
+                  console.log("error");
+               }
+            });
+			});
+		</script>   	
+  	</body>
+</html>

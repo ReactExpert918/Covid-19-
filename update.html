@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  	<head>
+    	<title>Update Patient Profile</title>
+    	<meta charset="utf-8">
+  	</head>
+  	<body>
+
+      <h3>Update patient profile</h3>
+      <form id="form1">
+
+        <label for="id">Id:</label><br />
+        <input type="text" id="id" readonly><br /><br>
+
+        <label for="name">Name:</label><br />
+        <input type="text" id="name"><br /><br>
+
+        <label for="gender">Gender:</label><br>
+        <select id="gender">
+            <option value="0">PLEASE CHOOSE</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+         </select><br /><br />
+
+         <label for="age">Age:</label><br />
+         <input type="text" id="age"><br /><br>
+
+         <label for="address">Address:</label><br />
+         <textarea id="address"rows="4" cols="50"></textarea><br /><br>
+
+         <label for="postcode">Postcode:</label><br />
+         <input type="text" id="postcode"><br /><br>
+
+         <label for="city">City:</label><br />
+         <input type="text" id="city"><br /><br>
+
+         <label for="state">State:</label><br />
+         <input type="text" id="state"><br /><br>
+
+         <label for="mobileno">Mobile No:</label><br />
+         <input type="text" id="mobileno"><br /><br>
+
+         <input type="submit" value="Submit">
+      </form>
+
+      <br />
+      <a href="index.html">Main Page</a>
+
+   	<script src="js/jquery-3.2.1.min.js"></script>
+		<script>
+			$(function(){   
+
+            var getParams = function (url) {
+               var params = {};
+               var parser = document.createElement('a');
+               parser.href = url;
+               var query = parser.search.substring(1);
+               var vars = query.split('&');
+               for (var i = 0; i < vars.length; i++) {
+                  var pair = vars[i].split('=');
+                  params[pair[0]] = decodeURIComponent(pair[1]);
+               }
+               return params;
+            };
+
+            var params = getParams(window.location.href);
+            id = params.id;
+
+            $.ajax({
+               type: "get", 
+               url: 'api/patients/' + id,
+               dataType: "json",
+               success: function(data){
+
+                  $("#id").val(data.id);
+                  $("#name").val(data.name);
+                  $("#gender").val(data.gender);
+                  $("#age").val(data.age);
+                  $("#address").val(data.address);
+                  $("#postcode").val(data.postcode); 
+                  $("#city").val(data.city); 
+                  $("#state").val(data.state); 
+                  $("#mobileno").val(data.mobileno); 
+
+               },
+               error: function() {
+                  console.log("error");
+               }
+            });  
+
+            $("#form1").submit(function(event){
+               event.preventDefault(); //prevent redirect/page refresh
+
+               var id = $("#id").val();
+
+               //Generate JSON Data
+               var obj = new Object();
+               obj.name = $("#name").val();
+               obj.gender = $("#gender").val();
+               obj.age = $("#age").val();
+               obj.address = $("#address").val();
+               obj.postcode = $("#postcode").val();
+               obj.city = $("#city").val();
+               obj.state = $("#state").val();
+               obj.mobileno = $("#mobileno").val();
+
+               //POST /patients
+               $.ajax({
+                  type: "put",      
+                  url: 'api/patients/' + id,
+                  contentType: 'application/json',
+                  data: JSON.stringify(obj),            
+                  dataType: "json",
+                  success: function(data){
+                     alert("Update successful!");
+                     window.location.href = "index.html";
+                  },
+                  error: function() {
+                     console.log("error");
+                  }
+               });
+            });
+
+			});
+		</script>   	
+  	</body>
+</html>

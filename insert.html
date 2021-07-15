@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  	<head>
+    	<title>Insert Patients</title>
+    	<meta charset="utf-8">
+  	</head>
+  	<body>
+
+      <h3>New patient admission</h3>
+      <form id="form1">
+        <label for="name">Name:</label><br />
+        <input type="text" id="name"><br /><br>
+
+        <label for="gender">Gender:</label><br>
+        <select id="gender">
+            <option value="0">PLEASE CHOOSE</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+         </select><br /><br />
+
+         <label for="age">Age:</label><br />
+         <input type="text" id="age"><br /><br>
+
+         <label for="address">Address:</label><br />
+         <textarea id="address"rows="4" cols="50"></textarea><br /><br>
+
+         <label for="postcode">Postcode:</label><br />
+         <input type="text" id="postcode"><br /><br>
+
+         <label for="city">City:</label><br />
+         <input type="text" id="city"><br /><br>
+
+         <label for="state">State:</label><br />
+         <input type="text" id="state"><br /><br>
+
+         <label for="mobileno">Mobile No:</label><br />
+         <input type="text" id="mobileno"><br /><br>
+
+         <input type="submit" value="Submit">
+      </form>
+
+      <br />
+      <a href="index.html">Main Page</a>
+
+   	<script src="js/jquery-3.2.1.min.js"></script>
+		<script>
+			$(function(){    
+
+            $("#form1").submit(function(event){
+               event.preventDefault(); //prevent redirect/page refresh
+
+               //Generate JSON Data
+               var obj = new Object();
+               obj.name = $("#name").val();
+               obj.gender = $("#gender").val();
+               obj.age = $("#age").val();
+               obj.address = $("#address").val();
+               obj.postcode = $("#postcode").val();
+               obj.city = $("#city").val();
+               obj.state = $("#state").val();
+               obj.mobileno = $("#mobileno").val();
+
+               //POST /patients
+               $.ajax({
+                  type: "post",      
+                  url: 'api/patients',
+                  contentType: 'application/json',
+                  data: JSON.stringify(obj),            
+                  dataType: "json",
+                  success: function(data){
+                     window.location.href = "index.html";
+                  },
+                  error: function() {
+                     console.log("error");
+                  }
+               });
+            });
+
+			});
+		</script>   	
+  	</body>
+</html>

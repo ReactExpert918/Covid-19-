@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  	<head>
+    	<title>Display All Patients</title>
+    	<meta charset="utf-8">
+  	</head>
+  	<body>
+
+      <button type="button" id="addpatient">Add Patient</button><br /><br />
+      <table border="1" id="tbl">
+         <thead>
+            <tr>
+               <th>Index</th> 
+               <th>Name</th>  
+               <th>Mobile No</th>
+               <th>Status</th>
+               <th>Operations</th>
+            </tr>   
+         </thead>
+         <tbody>            
+         </tbody>
+      </table> 
+
+   	<script src="js/jquery-3.2.1.min.js"></script>
+		<script>
+			$(function(){
+
+            $.ajax({
+               type: "get", 
+               url: 'api/patients',
+               dataType: "json",
+               success: function(data){
+
+                  index = 0;
+                  for (var x in data) {
+
+                     index++;
+
+                     var status = "";
+                     var statusdate = "";
+
+                     if (data[x].status == 1) {   
+                        status = "Admission";
+                        statusdate = data[x].admissiondate;
+                     }
+                     else if (data[x].status == 2) {
+                        status = "ICU admission";
+                        statusdate = data[x].icuadmissiondate;
+                     }
+                     else if (data[x].status == 3) {
+                        status = "Clinical death";
+                        statusdate = data[x].clinicaldeathdate;
+                     }
+                     else if (data[x].status == 4) {
+                        status = "Discharge";    
+                        statusdate = data[x].dischargedate;                 
+                     }
+
+                     $("#tbl tbody").append("<tr>" +
+                                            "   <td>" + index + "</td>" +
+                                            "   <td><a href='display.html?id=" + data[x].id + "'>" + data[x].name + "</a></td>" +
+                                            "   <td>" + data[x].mobileno + "</td>" +
+                                            "   <td>" + status + "<br />" + statusdate + "</td>" +
+                                            "   <td><a href='display.html?id=" + data[x].id + "'>View Patient</a><br /><br />" + 
+                                                   "<a href='update.html?id=" + data[x].id + "'>Update Patient</a><br /><br />" + 
+                                                   "<button type='button' data-id='" + data[x].id + "' data-status='2'>Set ICU</button><br /><br />" + 
+                                                   "<button type='button' data-id='" + data[x].id + "' data-status='3'>Set Clinical Death</button><br /><br />" + 
+                                                   "<button type='button' data-id='" + data[x].id + "' data-status='4'>Set Discharge</button><br /><br /></td>" + 
+                                            "</tr>");
+                  }
+               },
+               error: function() {
+                  console.log("error");
+               }
+            });
+
+            $("#addpatient").click(function(){
+               window.location.href = "insert.html";              
+            });     
+
+            $("#tbl").on("click", "button", function() { 
+               var id = this.getAttribute("data-id"); 
+               var status = this.getAttribute("data-status");  
+               console.log(id + " | " + status);   
+
+               var obj = new Object();
+               obj.status = status;
+
+               var result = confirm("Are you sure you want to change the status!");
+
+               if (result) {
+                  //PUT patients/status/{id}
+                  $.ajax({
+                     type: "put",      
+                     url: 'api/patients/status/' + id,
+                     contentType: 'application/json',
+                     data: JSON.stringify(obj),            
+                     dataType: "json",
+                     success: function(data){
+                        window.location.reload();
+                     },
+                     error: function() {
+                        console.log("error");
+                     }
+                  });
+               }
+            });    
+			});
+		</script>   	
+  	</body>
+</html>
